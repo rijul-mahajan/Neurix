@@ -24,7 +24,7 @@ const tooltip = document.getElementById("tooltip");
 let network = {
   layers: 3,
   neurons: 5,
-  activation: "random",
+  activation: "sigmoid",
   animationSpeed: 1,
   nodeColor: "#00b0ff",
   edgeColor: "#4f5b62",
@@ -107,111 +107,173 @@ function createNetwork() {
   }
 }
 
+// Mathematical activation functions
+function relu(x) {
+  return Math.max(0, x);
+}
+
+function sigmoid(x) {
+  return 1 / (1 + Math.exp(-x));
+}
+
+function tanh(x) {
+  return Math.tanh(x);
+}
+
+function leakyRelu(x, alpha = 0.01) {
+  return x > 0 ? x : alpha * x;
+}
+
+function softmax(values) {
+  const max = Math.max(...values);
+  const exps = values.map((v) => Math.exp(v - max));
+  const sum = exps.reduce((a, b) => a + b, 0);
+  return exps.map((exp) => exp / sum);
+}
+
 // Animate activations based on selected pattern
 function updateActivations() {
-  switch (network.activation) {
-    case "random":
-      // Randomly activate nodes
-      for (let layer = 0; layer < network.layers; layer++) {
-        const nodesInLayer = network.nodes.filter((n) => n.layer === layer);
-        for (let i = 0; i < nodesInLayer.length; i++) {
-          if (Math.random() < 0.01 * network.animationSpeed) {
-            network.activations[layer][i] = 1;
+  const time = Date.now() / 1000;
 
-            // Propagate activation to next layer's connections
-            if (layer < network.layers - 1) {
-              const connections = network.edges.filter(
-                (e) => e.source.layer === layer && e.source.index === i
-              );
+  // Generate input signals (first layer)
+  const inputLayer = network.nodes.filter((n) => n.layer === 0);
+  inputLayer.forEach((node, i) => {
+    // Create varied input signals and normalize to [-1, 1] range
+    const rawSignal =
+      Math.sin(time * network.animationSpeed + i * 0.5) * 2 +
+      Math.cos(time * network.animationSpeed * 0.7 + i) +
+      Math.random() * 0.5 -
+      0.25;
 
-              connections.forEach((conn) => {
-                conn.signalActive = true;
-                conn.animationProgress = 0;
-              });
-            }
+    // Normalize to [-1, 1] range using tanh
+    const normalizedSignal = Math.tanh(rawSignal * 0.5);
+
+    network.activations[0][i] = normalizedSignal;
+    node.rawActivation = normalizedSignal;
+  });
+
+  // Forward propagation through hidden and output layers
+  for (let layer = 1; layer < network.layers; layer++) {
+    const currentLayerNodes = network.nodes.filter((n) => n.layer === layer);
+    const prevLayerNodes = network.nodes.filter((n) => n.layer === layer - 1);
+
+    currentLayerNodes.forEach((node, nodeIndex) => {
+      let weightedSum = 0;
+
+      // Calculate weighted sum from previous layer
+      prevLayerNodes.forEach((prevNode, prevIndex) => {
+        const edge = network.edges.find(
+          (e) =>
+            e.source.layer === layer - 1 &&
+            e.source.index === prevIndex &&
+            e.target.layer === layer &&
+            e.target.index === nodeIndex
+        );
+
+        if (edge) {
+          const prevActivation = network.activations[layer - 1][prevIndex];
+          weightedSum += prevActivation * edge.weight;
+
+          // Trigger signal animation based on activation strength
+          if (Math.abs(prevActivation) > 0.3 && !edge.signalActive) {
+            edge.signalActive = true;
+            edge.animationProgress = 0;
           }
         }
-      }
-      break;
+      });
 
-    case "wave":
-      // Create a wave pattern
-      const time = Date.now() / 1000;
-      for (let layer = 0; layer < network.layers; layer++) {
-        const nodesInLayer = network.nodes.filter((n) => n.layer === layer);
-        for (let i = 0; i < nodesInLayer.length; i++) {
-          network.activations[layer][i] =
-            0.5 +
-            0.5 * Math.sin(time * network.animationSpeed + layer + i * 0.5);
+      // Add bias (small random value)
+      weightedSum += (Math.random() - 0.5) * 0.2;
 
-          // Trigger signal on strong activation
-          if (
-            network.activations[layer][i] > 0.8 &&
-            layer < network.layers - 1
-          ) {
-            const connections = network.edges.filter(
-              (e) => e.source.layer === layer && e.source.index === i
-            );
-
-            connections.forEach((conn) => {
-              if (!conn.signalActive) {
-                conn.signalActive = true;
-                conn.animationProgress = 0;
-              }
-            });
-          }
-        }
-      }
-      break;
-
-    case "sequential":
-      // Sequential activation through layers
-      const seqTime =
-        (Date.now() % (5000 / network.animationSpeed)) /
-        (5000 / network.animationSpeed);
-      const activeLayer = Math.floor(seqTime * network.layers);
-
-      for (let layer = 0; layer < network.layers; layer++) {
-        const nodesInLayer = network.nodes.filter((n) => n.layer === layer);
-
-        for (let i = 0; i < nodesInLayer.length; i++) {
-          if (layer === activeLayer) {
-            network.activations[layer][i] =
-              0.8 +
-              0.2 * Math.sin((Date.now() / 200) * network.animationSpeed + i);
-
-            // Propagate to next layer
-            if (
-              layer < network.layers - 1 &&
-              network.activations[layer][i] > 0.9
-            ) {
-              const connections = network.edges.filter(
-                (e) => e.source.layer === layer && e.source.index === i
-              );
-
-              connections.forEach((conn) => {
-                if (!conn.signalActive) {
-                  conn.signalActive = true;
-                  conn.animationProgress = 0;
+      // Apply activation function
+      let activatedValue;
+      switch (network.activation) {
+        case "relu":
+          activatedValue = relu(weightedSum);
+          break;
+        case "sigmoid":
+          activatedValue = sigmoid(weightedSum);
+          break;
+        case "tanh":
+          activatedValue = tanh(weightedSum);
+          break;
+        case "leaky_relu":
+          activatedValue = leakyRelu(weightedSum);
+          break;
+        case "softmax":
+          // For softmax, we need to calculate for the entire layer
+          if (nodeIndex === 0) {
+            const layerSums = [];
+            currentLayerNodes.forEach((_, idx) => {
+              let sum = 0;
+              prevLayerNodes.forEach((prevNode, prevIdx) => {
+                const edge = network.edges.find(
+                  (e) =>
+                    e.source.layer === layer - 1 &&
+                    e.source.index === prevIdx &&
+                    e.target.layer === layer &&
+                    e.target.index === idx
+                );
+                if (edge) {
+                  sum += network.activations[layer - 1][prevIdx] * edge.weight;
                 }
               });
-            }
-          } else {
-            // Slowly fade out
-            network.activations[layer][i] *= 0.95;
+              layerSums.push(sum + (Math.random() - 0.5) * 0.2);
+            });
+
+            const softmaxValues = softmax(layerSums);
+            currentLayerNodes.forEach((_, idx) => {
+              network.activations[layer][idx] = softmaxValues[idx];
+            });
           }
-        }
+          // Skip individual calculation for softmax as it's done above
+          if (network.activation === "softmax") {
+            return; // Exit the updateActivations function early for softmax
+          }
+          break;
+        default:
+          activatedValue = sigmoid(weightedSum); // fallback
       }
-      break;
+
+      if (network.activation !== "softmax") {
+        network.activations[layer][nodeIndex] = activatedValue;
+      }
+
+      node.rawActivation = weightedSum;
+    });
   }
 
-  // Update node activations
+  // Update node activations and normalize for visualization
   network.nodes.forEach((node) => {
     if (
       network.activations[node.layer] &&
       network.activations[node.layer][node.index] !== undefined
     ) {
-      node.activation = network.activations[node.layer][node.index];
+      let activation = network.activations[node.layer][node.index];
+
+      // Normalize activation for better visualization
+      switch (network.activation) {
+        case "relu":
+          node.activation = Math.min(1, activation / 3); // Scale ReLU for vis
+          break;
+        case "sigmoid":
+          node.activation = activation; // Already 0-1
+          break;
+        case "tanh":
+          node.activation = (activation + 1) / 2; // Convert -1,1 to 0,1
+          break;
+        case "leaky_relu":
+          node.activation =
+            activation > 0
+              ? Math.min(1, activation / 3)
+              : Math.max(0, activation + 1); // Handle negative values
+          break;
+        case "softmax":
+          node.activation = activation; // Already 0-1
+          break;
+        default:
+          node.activation = Math.max(0, Math.min(1, activation));
+      }
     }
   });
 
@@ -223,11 +285,6 @@ function updateActivations() {
       if (edge.animationProgress >= 1) {
         edge.signalActive = false;
         edge.animationProgress = 0;
-
-        // Activate target node
-        if (edge.target.layer < network.layers) {
-          network.activations[edge.target.layer][edge.target.index] = 1;
-        }
       }
     }
   });
@@ -408,9 +465,14 @@ function drawNetwork() {
           : hoverTarget.data.layer === network.layers - 1
           ? "Output"
           : "Hidden";
-      tooltip.innerHTML = `${layerType} Layer Node<br>Activation: ${(
-        hoverTarget.data.activation * 100
-      ).toFixed(0)}%`;
+
+      // Show raw activation for input layer, normalized percentage for others
+      const displayValue =
+        hoverTarget.data.layer === 0
+          ? hoverTarget.data.rawActivation.toFixed(2)
+          : (hoverTarget.data.activation * 100).toFixed(0) + "%";
+
+      tooltip.innerHTML = `${layerType} Layer Node<br>Activation: ${displayValue}`;
     } else if (hoverTarget.type === "edge") {
       tooltip.innerHTML = `Connection<br>Weight: ${hoverTarget.data.weight.toFixed(
         2
@@ -530,7 +592,7 @@ resetButton.addEventListener("click", () => {
   // Reset to defaults
   network.layers = 3;
   network.neurons = 5;
-  network.activation = "random";
+  network.activation = "sigmoid";
   network.animationSpeed = 1;
   network.nodeColor = "#00b0ff";
   network.edgeColor = "#4f5b62";
