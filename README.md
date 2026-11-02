@@ -1,162 +1,95 @@
-# Interactive Neural Network Visualization
+# Interactive Neural Network
 
-![Neural Network Visualization](neural-network.png)
+**Explore how neural networks process information — and learn how they learn.**
 
-An interactive web-based tool to explore and visualize how neural networks function. Adjust layers, neurons, activation patterns, and visual styles to see real-time changes in a dynamic neural network simulation.
+An interactive, browser-based playground for understanding neural networks. Visualize signals moving through layers of neurons, inspect weights and activations, and train a small network on familiar logic gates using gradient descent and backpropagation.
 
-© 2025 Rijul Mahajan | [GitHub](https://github.com/rijul-mahajan)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Demo](#demo)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+**[Launch Interactive Neural Network](https://rijul-mahajan.github.io/Interactive-Neural-Network/)**
 
 ---
 
-## Overview
+## What you can do
 
-This project provides an interactive visualization of a neural network, designed to help users understand the structure and behavior of neural networks. Built with HTML, CSS, and JavaScript, it features a canvas-based simulation where users can tweak parameters like the number of layers, neurons per layer, activation patterns, and visual properties such as colors and glow effects.
+### Explore mode
 
-The tool is beginner-friendly and educational, offering tooltips and real-time feedback as you interact with the network.
+Watch a neural network perform forward propagation in real time.
 
----
+- Configure a network with **2–6 layers** and **2–12 neurons per hidden layer**.
+- Choose hidden-layer activation functions: **Sigmoid, Tanh, ReLU,** or **Leaky ReLU**.
+- Choose an output activation: **Sigmoid** or **Softmax**.
+- Switch between automatic input signals and manual input values.
+- Generate new weights or reset the network settings.
+- Customize node and edge colors, glow intensity, edge coloring, and activation-value labels.
 
-## Features
+Select any neuron to inspect its activation and the weighted-sum calculation that produced it. Hover over a connection to examine its weight and the signal it carries.
 
-- **Configurable Network:**
+### Train mode
 
-  - Adjust the number of layers (2–6).
-  - Set neurons per hidden layer (2–12).
-  - Choose from three activation patterns: Random, Wave, or Sequential.
-  - Control animation speed (0.1x–2x).
+Experiment with a small neural network learning Boolean logic.
 
-- **Customizable Appearance:**
+- Train on **XOR, AND, OR,** and **XNOR** datasets.
+- Adjust the learning rate.
+- Watch the network update its weights through backpropagation and gradient descent.
+- Follow training progress through the loss and accuracy statistics.
+- View the decision-boundary plot as the network learns.
 
-  - Change node and connection colors using color pickers.
-  - Adjust glow intensity for active nodes (0.5–3).
-
-- **Interactive Elements:**
-
-  - Hover over nodes to see activation levels (Input, Hidden, or Output layer).
-  - Hover over connections to view weights and signal status.
-  - Real-time animation of signal propagation.
-
-- **Responsive Design:**
-
-  - Adapts to different screen sizes with a mobile-friendly layout.
-
-- **Reset Functionality:**
-  - Restore default settings with a single button.
+The visualizer also illustrates why a network without a hidden layer cannot learn XOR, and how adding a hidden layer makes that task possible.
 
 ---
 
-## Demo
+## Controls
 
-Try the live demo [here](https://rijul-mahajan.github.io/Interactive-Neural-Network/).
+| Control | Action |
+|---|---|
+| Play / Pause | Start or pause the animation or training |
+| Step | Advance the simulation; in Train mode, perform a short training step |
+| Restart | Restart using the same initial weights |
+| New weights | Generate a new set of network weights |
+| Reset settings | Restore the default configuration |
+| Theme toggle | Switch between dark and light themes |
+
+### Keyboard shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Space` | Play or pause |
+| `N` | Step |
+| `R` | Restart |
 
 ---
 
-## Installation
+## Run locally
 
-To run this project locally, follow these steps:
+No build tools, package managers, dependencies, or backend are required.
 
-1. **Clone the Repository:**
+1. Clone the repository:
 
    ```bash
-   git clone https://github.com/rijul-mahajan/interactive-neural-network.git
-   cd interactive-neural-network
+   git clone https://github.com/rijul-mahajan/Interactive-Neural-Network.git
+   cd Interactive-Neural-Network
    ```
 
-2. **Open the Project:**
+2. Open `index.html` in a modern browser.
 
-   - No additional dependencies are required since it uses vanilla HTML, CSS, and JavaScript.
-   - Simply open `index.html` in a web browser:
-     ```bash
-     open index.html  # MacOS
-     start index.html # Windows
-     ```
+You can also serve the folder locally:
 
-3. **Optional: Serve Locally:**
-   - For a better development experience, use a local server (e.g., with Python):
-     ```bash
-     python3 -m http.server 8000
-     ```
-   - Then visit `http://localhost:8000` in your browser.
-
----
-
-## Usage
-
-1. **Launch the Tool:**
-   Open `index.html` in a browser to start the visualization.
-
-2. **Adjust Settings:**
-
-   - Use the sliders and dropdowns under "Network Configuration" to modify the network structure and behavior.
-   - Customize the appearance using the options under "Appearance."
-
-3. **Interact with the Visualization:**
-
-   - Hover over nodes and connections in the canvas to see detailed tooltips.
-   - Watch the network animate based on your chosen activation pattern.
-
-4. **Reset:**
-   - Click the "Reset Network" button to revert to default settings.
-
----
-
-## Project Structure
-
-```
-interactive-neural-network/
-ව/├── index.html       # Main HTML file
-├── script.js        # JavaScript logic for the neural network
-├── style.css        # CSS styles
-├── neural-network.png # Favicon image
-└── README.md        # This file
+```bash
+python3 -m http.server 8000
 ```
 
-- **`index.html`**: Defines the structure, including controls and canvas.
-- **`script.js`**: Handles network creation, animation, and interactivity.
-- **`style.css`**: Provides dark-themed styling with responsive design.
+Then visit [http://localhost:8000](http://localhost:8000).
 
 ---
+
+## Built with
+
+- HTML
+- CSS
+- JavaScript
+- HTML Canvas for network rendering and training charts
+
+The application runs entirely in the browser. Inter and JetBrains Mono are loaded from Google Fonts, with system font fallbacks available.
 
 ## Contributing
 
-Contributions are welcome! Here's how you can help:
-
-1. **Fork the Repository:**
-   Click the "Fork" button on GitHub.
-
-2. **Create a Branch:**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Make Changes:**
-   Add features, fix bugs, or improve documentation.
-
-4. **Submit a Pull Request:**
-   Open a pull request with a clear description of your changes.
-
-Feel free to open issues for bug reports or feature requests!
-
----
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](https://opensource.org/license/mit) for details.
-
----
-
-_Created by Rijul Mahajan, 2025._
+Ideas, bug reports, and improvements are welcome. Open an issue to report a problem or suggest a new feature. Pull requests are welcome.
