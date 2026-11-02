@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Interactive Neural Network</title>
+<title>Neurix — Interactive Neural Network Playground</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="theme-color" content="#09090b">
-<meta name="description" content="Explore neural network forward propagation and train simple networks with interactive, step-by-step visualizations.">
+<meta name="description" content="Neurix is an interactive neural network playground. Explore forward propagation, inspect neurons and weights, and train networks with backpropagation.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#09090b;--pn:#101013;--rs:#17171b;--hv:#1e1e24;--sg:#2a2a32;--bd:#24242b;--bd2:#33333c;--tx:#f4f4f5;--tx2:#a1a1aa;--mu:#71717a;--ac:#7480ff;--acs:rgba(116,128,255,.13);--amber:#f5a524;--red:#f0605d;--green:#34d399;--vio:#a78bfa;--idle:#2e2e37;--sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -119,7 +119,7 @@ input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-we
 </head>
 <body>
 <header>
-  <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ac)"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M10.5 7.2 6.5 16.8M13.5 7.2l4 9.6"/></svg>Neural Network<span class="sl2 mu">/</span><span class="mu">Visualizer</span></div>
+  <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ac)"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M10.5 7.2 6.5 16.8M13.5 7.2l4 9.6"/></svg>Neurix<span class="sl2 mu">/</span><span class="mu">Neural Network Playground</span></div>
   <div class="hr"><button class="ib" id="theme" aria-label="Toggle theme" title="Toggle theme"></button></div>
 </header>
 <div class="app">
@@ -150,7 +150,7 @@ input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-we
       <div class="card"><div class="ch" data-ic="message">Inspector</div><div id="in"></div></div>
     </div>
     <p class="hint"><kbd>Space</kbd> play · <kbd>N</kbd> step · <kbd>R</kbd> restart · click a neuron to inspect it</p>
-    <div class="foot">&copy; 2025 Rijul Mahajan | Visit my <a href="https://github.com/rijul-mahajan" target="_blank" rel="noopener">GitHub</a> for more projects.</div>
+    <div class="foot">Neurix · Interactive Neural Network Playground · <a href="https://github.com/rijul-mahajan/Neurix" target="_blank" rel="noopener">Source code</a></div>
   </main>
 </div>
 <script>
