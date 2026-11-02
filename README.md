@@ -4,7 +4,7 @@
 
 Neurix is an interactive, browser-based playground for understanding neural networks. Visualize signals moving through layers of neurons, inspect weights and activations, and train a small network on familiar logic gates using gradient descent and backpropagation.
 
-**[Launch Neurix](https://rijul-mahajan.github.io/Neurix/)**
+**[Launch Neurix](https://rijul-mahajan.github.io/Interactive-Neural-Network/)**
 
 ---
 
@@ -65,8 +65,8 @@ No build tools, package managers, dependencies, or backend are required.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/rijul-mahajan/Neurix.git
-   cd Neurix
+   git clone https://github.com/rijul-mahajan/Interactive-Neural-Network.git
+   cd Interactive-Neural-Network
    ```
 
 2. Open `index.html` in a modern browser.
